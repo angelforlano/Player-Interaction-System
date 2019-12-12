@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [Range(1, 3)] public float interactitonRadius = 1;
-    public Vector3 interactitonCenter;
+    [Range(1, 3)] public float interactionRadius = 1;
+    public Vector3 interactionCenter;
 
     InteractItem itemToInteract;
+    float lastItemSetTime;
+    bool hasInteracted;
 
     public bool HasItemToInteract
     {
@@ -16,13 +18,21 @@ public class Player : MonoBehaviour
 
     void FindInteractionItem()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position + interactitonCenter, interactitonRadius);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position + interactionCenter, interactionRadius);
         
         for (int i = 0; i < hitColliders.Length; i++)
         {
-            itemToInteract = hitColliders[i].GetComponent<InteractItem>();
-            if (itemToInteract != null)
+            InteractItem item = hitColliders[i].GetComponent<InteractItem>();
+            
+            if (item != null)
             {
+                if (!HasItemToInteract)
+                {
+                    itemToInteract = item;
+                    lastItemSetTime = Time.time;
+                    hasInteracted = false;
+                }
+
                 return;
             }
         }
@@ -36,6 +46,7 @@ public class Player : MonoBehaviour
         {
             if (HasItemToInteract)
             {
+                hasInteracted = true;
                 itemToInteract.Interact(this);
             }
         }
@@ -47,6 +58,13 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         FindInteractionItem();
+
+        if (HasItemToInteract && (Time.time - lastItemSetTime) > 3 && !hasInteracted)
+        {
+            HUDController.Instance.SetInteractPopText(true);
+        } else {
+            HUDController.Instance.SetInteractPopText(false);
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -60,6 +78,6 @@ public class Player : MonoBehaviour
         }
 
         // Display the interaction radius when selected.
-        Gizmos.DrawWireSphere(transform.position + interactitonCenter, interactitonRadius);
+        Gizmos.DrawWireSphere(transform.position + interactionCenter, interactionRadius);
     }
 }
