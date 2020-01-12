@@ -37,18 +37,25 @@ public class Player : MonoBehaviour
             }
         }
 
+        if (HasItemToInteract && hasInteracted)
+        {
+            itemToInteract.StopInteract(this);
+        }
+
         itemToInteract = null;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && HasItemToInteract)
         {
-            if (HasItemToInteract)
-            {
-                hasInteracted = true;
-                itemToInteract.Interact(this);
-            }
+            hasInteracted = true;
+            itemToInteract.StartInteract(this);
+        }
+
+        if (Input.GetKeyUp(KeyCode.E) && HasItemToInteract)
+        {
+            itemToInteract.StopInteract(this);
         }
 
         var move = new Vector3(Input.GetAxis("Horizontal"), 0 , Input.GetAxis("Vertical"));

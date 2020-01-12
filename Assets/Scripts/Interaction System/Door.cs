@@ -9,9 +9,9 @@ public class Door : InteractItem
     public UnityEvent onCloseDoorEvent;
     bool status;
 
-    public override void Interact(Player _player)
+    public override void StartInteract(Player _player)
     {
-        base.Interact(_player);
+        base.StartInteract(_player);
 
         if (status)
         {

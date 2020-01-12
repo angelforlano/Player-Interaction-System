@@ -7,9 +7,9 @@ public class GenericItem : InteractItem
 {
     public UnityEvent onInteractEvent;
 
-    public override void Interact(Player _player)
+    public override void StartInteract(Player _player)
     {
-        base.Interact(_player);
+        base.StartInteract(_player);
 
         onInteractEvent.Invoke();
     }
